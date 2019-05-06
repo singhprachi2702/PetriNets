@@ -1,0 +1,27 @@
+Create a selection query whose chosen plan is a file scan.
+select * from section where course_id = 'CS-101' ;
+
+Create a selection query whose chosen plan uses a bit-map index scan.  You can create indices on appropriate relation attributes to create such a case. 
+explain analyze select * from student where ID = '35175' or  ID = '1000' ;
+
+Create a query where PostgreSQL chooses a (plain) index nested loops join.
+
+
+Create an index as below, and see the time taken:
+Query returned successfully with no result in 724 msec.
+
+Similarly see how long it takes to drop the above index using:
+Query returned successfully with no result in 96 msec.
+
+
+
+
+"Planning Time: 69.861 ms"
+"Execution Time: 180.904 ms"
+
+"Planning Time: 0.092 ms"  "Planning Time: 0.099 ms"
+"Execution Time: 23.554 ms" "Execution Time: 26.865 ms"
+
+
+
+
