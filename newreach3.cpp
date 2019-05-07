@@ -35,6 +35,20 @@ public:
 	
 };
 
+class termination
+{
+public:
+	vector<int> terminal{vector<int>(8,0)};
+
+	termination(vector<int> t)
+	{
+		for(int i=0;i<t.size();i++)
+		{
+			terminal[t[i]]=1;
+		}
+	}
+};
+
 class transition
 {
 public:
@@ -88,7 +102,7 @@ bool isnotmem(set<int> s, int x)
 	else
 		return true;
 } 
-void reachability(transition t,Marking m)
+int reachability(transition t,Marking m,vector<int> v)
 {
 	set<int> remaint;
 	std::ofstream ofs;
@@ -104,12 +118,16 @@ void reachability(transition t,Marking m)
 	/*for(auto it=remaint.begin();it != remaint.end();++it)
 		cout<<*it<<" ";*/
 	
-	while(!remaint.empty())
+	bool b=true;
+
+	while(!remaint.empty()&&(b))
 	{
 		/*cout<<"\nStart Printing remaint";
 		for(auto it=remaint.begin();it != remaint.end();++it)
 			cout<<*it<<" ";
 		cout<<"\nEnd Printing remaint";*/
+		b=false;
+		
 
 		for(int i=0;i<m.retsize();i++)
 		{
@@ -124,86 +142,120 @@ void reachability(transition t,Marking m)
 		
 		//cout<<"Step3";
 		for (auto it=remaint.begin();it != remaint.end();++it) 
-        	{
-			flag=true;
-			//cout<<"Step4";
-			
-			for(int i=0;i<t.preplace[*it].size();i++)
-			{
-				if(isnotmem(s,t.preplace[*it][i]))
-				{
-					flag=false;
-					break;
-				}
-			}
-			//cout<<"Step5";
-			
-			//cout<<"Print value of Flag"<<flag;
-			//cout<<"Step 6";
-			
-			
-			/*if(flag==true)
-			{
-				//cout<<"Hahaha"<<*it<<"\n";
-				remaint.erase(*it);
-				//cout<<"Again Hahaha"<<*it<<"\n";
-				
-				for(int i=0;i<t.preplace[*it].size();i++)
-				{
-					cout<<t.preplace[*it][i]<<" ";
-					ofs<<t.preplace[*it][i]<<" ";
-				}
-
-				cout<<"->";
-				ofs<<"->";
+        {
+					flag=true;
+					//cout<<"Step4";
 					
-				for(int j=0;j<t.postplace[*it].size();++j)
-				{	
-					//cout<<"\ninside 1 for";				
-					m.Initial[t.postplace[*it][j]]=1;
-					cout<<t.postplace[*it][j]<<" ";
-					ofs<<t.postplace[*it][j]<<" ";
-				}
-				for(int j=0;j<t.preplace[*it].size();++j)
-				{
-					//cout<<"\ninside 2 for";
-					s.erase(t.preplace[*it][j]);
-					m.Initial[t.preplace[*it][j]]=0;
-				}
-				//break;---------------------------------------------------->
-				cout<<"\n";
-				ofs<<"\n";
-			}*/
-			if(flag==true)
-			{
-				remaint.erase(*it);
-				int i=0;
-				while(i<t.preplace[*it].size())
-				{	
-					for(int j=0;j<t.postplace[*it].size();++j)
+					for(int i=0;i<t.preplace[*it].size();i++)
 					{
+						if(isnotmem(s,t.preplace[*it][i]))
+						{
+							flag=false;
+							break;
+						}
+					}
+					//cout<<"Step5";
+					
+					//cout<<"Print value of Flag"<<flag;
+					//cout<<"Step 6";
+					
+					
+					/*if(flag==true)
+					{
+						//cout<<"Hahaha"<<*it<<"\n";
+						remaint.erase(*it);
+						//cout<<"Again Hahaha"<<*it<<"\n";
 						
+						for(int i=0;i<t.preplace[*it].size();i++)
+						{
+							cout<<t.preplace[*it][i]<<" ";
+							ofs<<t.preplace[*it][i]<<" ";
+						}
+
+						cout<<"->";
+						ofs<<"->";
+							
+						for(int j=0;j<t.postplace[*it].size();++j)
+						{	
+							//cout<<"\ninside 1 for";				
+							m.Initial[t.postplace[*it][j]]=1;
+							cout<<t.postplace[*it][j]<<" ";
+							ofs<<t.postplace[*it][j]<<" ";
+						}
+						for(int j=0;j<t.preplace[*it].size();++j)
+						{
+							//cout<<"\ninside 2 for";
+							s.erase(t.preplace[*it][j]);
+							m.Initial[t.preplace[*it][j]]=0;
+						}
+						//break;---------------------------------------------------->
+						cout<<"\n";
+						ofs<<"\n";
+					}*/
+					bool first=true;
+					if(flag==true)
+					{
+						remaint.erase(*it);
+						int i=0;
+						while(i<t.preplace[*it].size())
+						{	
 							cout<<t.preplace[*it][i]<<"->";
 							ofs<<t.preplace[*it][i]<<"->";
+							for(int j=0;j<t.postplace[*it].size();++j)
+							{
+									if(!first)
+									{
+										cout<<",";
+										ofs<<",";
+									}
+									m.Initial[t.postplace[*it][j]]=1;
+									cout<<t.postplace[*it][j];
+									ofs<<t.postplace[*it][j];
 
-							m.Initial[t.postplace[*it][j]]=1;
-							cout<<t.postplace[*it][j]<<"\n";
-							ofs<<t.postplace[*it][j]<<"\n";
-
-							s.erase(t.preplace[*it][i]);
-							m.Initial[t.preplace[*it][i]]=0;
-
+									s.erase(t.preplace[*it][i]);
+									m.Initial[t.preplace[*it][i]]=0;
+									first=false;
+							}
+							cout<<"\n";
+							ofs<<"\n";	
+							i++;
+							first=true;
+						}	
 					}
-				i++;
-				}	
-			}
-		//cout<<"exiting for loop";	
+
+					
+				//cout<<"exiting for loop";	
+				}
+			// cout<<"start";
+			bool l ;
+			for (auto it=remaint.begin(); it !=remaint.end(); ++it) 
+        		{
+        			l=true;
+        			for(int j=0;j<t.preplace[*it].size();j++)
+        				{
+        					if(m.Initial[t.preplace[*it][j]]!=1)
+        						l=false;
+        				}
+        			if(l==true)
+        			{
+        				b=true;
+        			}
+				}							
+			// cout<<"end\n";
+			//cout<<"exiting while loop";
 		}
-	//cout<<"exiting while loop";
-	}
 //cout<<"exiting function";
 	ofs<<"}";
   	ofs.close();
+  	for (auto it=remaint.begin();it != remaint.end();++it) 
+        {
+        	for(int i=0;i<v.size();i++)
+        	{
+    			if(*it==v[i])
+    				return 0;
+    		}
+        }	
+    return 1;
 }
 int main()
 {
@@ -219,16 +271,23 @@ int main()
 	transition t(vect);
 	//t.print();
 	vector<int> mark({2});
+	vector<int> mark2({7});
+
 	Marking obj(mark);
+	termination obj2(mark2);
+
 	//obj.print();
 	int x = obj.retsize();
 	//cout<<x;
 	//cout<<"\nCalling Reachability\n";
-	reachability(t,obj);
+	if(reachability(t,obj,mark2))
+		cout<<"No deadlock";
+	else
+		cout<<"deadlock";
 	
   	//system("chmod 777 a.txt");
 	//system("dot -Tpng test.txt -o diag.png");
 	//system("dot -Tpng a.txt -o dia.png");
-	cout<<"Process Complete !! ";
+	// cout<<"Process Complete !! ";
 	return 0;
 }
